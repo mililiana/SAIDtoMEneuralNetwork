@@ -1,0 +1,30 @@
+model = Sequential([
+    Dense(128, input_shape=(x_train.shape[1],), activation='relu'),
+    Dropout(0.3),
+    Dense(64, activation='relu'),
+    Dropout(0.3),
+    Dense(41, activation='softmax')
+])
+
+# Compile the model
+model.compile(loss='sparse_categorical_crossentropy',
+              optimizer=Adam(learning_rate=0.001),
+              metrics=['accuracy'])
+
+# Transform disease data type into int
+from sklearn.preprocessing import LabelEncoder
+
+label_encoder = LabelEncoder()
+y_train_encoded = label_encoder.fit_transform(y_train)
+y_test_encoded = label_encoder.fit_transform(y_test)
+
+# Train the model
+early_stopping = tf.keras.callbacks.EarlyStopping(monitor='loss',
+                                                  patience=3)
+epochs = 100
+batch_size = 32
+model.fit(x_train, y_train_encoded, epochs=epochs, batch_size=batch_size,  callbacks=[early_stopping])
+
+# Evaluate the model
+loss, accuracy = model.evaluate(x_test, y_test_encoded, batch_size=batch_size)
+print(f"Test Loss: {loss:.4f}, Test Accuracy: {accuracy:.4f}")
