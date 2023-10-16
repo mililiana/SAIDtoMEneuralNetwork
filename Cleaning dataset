@@ -1,0 +1,14 @@
+df.isna().sum()
+df.isnull().sum()
+
+cols = df.columns
+data = df[cols].values.flatten()
+
+s = pd.Series(data)
+s = s.str.strip()
+s = s.values.reshape(df.shape)
+
+df = pd.DataFrame(s, columns=df.columns)
+
+df = df.fillna(0)
+df.head()
