@@ -1,8 +1,8 @@
 model = Sequential([
     Dense(128, input_shape=(x_train.shape[1],), activation='relu'),
-    Dropout(0.3),
+    Dropout(0.5),
     Dense(64, activation='relu'),
-    Dropout(0.3),
+    Dropout(0.5),
     Dense(41, activation='softmax')
 ])
 
@@ -12,9 +12,6 @@ model.compile(loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
 # Transform disease data type into int
-from sklearn.preprocessing import LabelEncoder
-
-label_encoder = LabelEncoder()
 y_train_encoded = label_encoder.fit_transform(y_train)
 y_test_encoded = label_encoder.fit_transform(y_test)
 
