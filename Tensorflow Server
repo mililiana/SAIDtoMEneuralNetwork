@@ -1,0 +1,61 @@
+import os
+import tempfile
+
+
+import tensorflow as tf
+
+MODEL_DIR = tempfile.gettempdir()
+version = 1
+export_path = os.path.join(MODEL_DIR, str(version))
+print('export_path = {}\n'.format(export_path))
+
+tf.keras.models.save_model(
+    model,
+    export_path,
+    overwrite=True,
+    include_optimizer=True,
+    save_format=None,
+    signatures=None,
+    options=None
+)
+
+print('\nSaved model:')
+!ls -l {export_path}
+
+
+!saved_model_cli show --dir {/tmp/1} --all
+
+---------------------------------------------
+
+import sys
+# We need sudo prefix if not on a Google Colab.
+if 'google.colab' not in sys.modules:
+  SUDO_IF_NEEDED = 'sudo'
+else:
+  SUDO_IF_NEEDED = ''
+
+!echo "deb http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal" | {SUDO_IF_NEEDED} tee /etc/apt/sources.list.d/tensorflow-serving.list && \
+curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | {SUDO_IF_NEEDED} apt-key add -
+!{SUDO_IF_NEEDED} apt update
+
+
+!wget 'http://storage.googleapis.com/tensorflow-serving-apt/pool/tensorflow-model-server-2.8.0/t/tensorflow-model-server/tensorflow-model-server_2.8.0_all.deb'
+!dpkg -i tensorflow-model-server_2.8.0_all.deb
+!pip3 install tensorflow-serving-api==2.8.0
+
+
+os.environ["MODEL_DIR"] = MODEL_DIR
+
+
+
+
+%%bash --bg
+nohup tensorflow_model_server \
+  --rest_api_port=8501 \
+  --model_name=fashion_model \
+  --model_base_path="${MODEL_DIR}" >server.log 2>&1
+
+
+
+
+!tail server.log
