@@ -7,3 +7,21 @@ input_d = np.zeros(133)
 for i in input_symptom:
   symptom_index = df1[df1['Symptom'] == i].index
   input_d[symptom_index] = df1['weight'][symptom_index]
+
+
+------------------------------------------------------------------
+
+input_d = input_d.reshape(1, -1)
+
+#make prediction
+predictions = model.predict(input_d)
+print(predictions) #outut all the disease with probabilities
+
+#find index of disease with the max probability
+predicted_category_index = np.argmax(predictions)
+
+# Decode the value to find disease (from int to string)
+decoded_value = label_encoder.inverse_transform([predicted_category_index])
+
+print("Disease:", decoded_value)
+print("Probability:", predictions[0][predicted_category_index])
