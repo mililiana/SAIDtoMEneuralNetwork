@@ -1,0 +1,31 @@
+import spacy
+import csv
+from googletrans import Translator
+translator = Translator()
+
+nlp = spacy.load("en_core_web_sm")
+
+# Зчитування симптомів з файлу CSV
+symptoms = []
+with open('/content/drive/My Drive/dataset_for_nlp.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile)
+    for row in reader:
+        symptoms.extend(row)
+
+text_to_translate = "привіт, я себе сьогодні погано почуваю, у мене нудота, блювання і пітливість. Як думаєш я помру?"
+user_input = translator.translate(text_to_translate, src='uk', dest='en')
+translated_text = user_input.text  # Get the translated text as a string
+
+# Токенізація
+user_input_tokens = [token.strip() for token in translated_text.split(',')]
+doc = nlp(' '.join(user_input_tokens))
+
+found_symptoms = []
+for token in doc:
+    if token.text in symptoms:
+        found_symptoms.append(token.text)
+
+if found_symptoms:
+    print("Знайдені симптоми:", found_symptoms)
+else:
+    print("Симптоми не знайдені.")
