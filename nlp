@@ -15,7 +15,7 @@ with open('/content/drive/My Drive/dataset_for_nlp.csv', newline='') as csvfile:
     for row in reader:
         symptoms.extend(row)
 
-text_to_translate = "привіт, я себе сьогодні погано почуваю, у мене нудота, блювання і пітливість. Як думаєш я помру?"
+text_to_translate = input("")
 user_input = translator.translate(text_to_translate, src='uk', dest='en')
 translated_text = user_input.text  # Get the translated text as a string
 
@@ -32,3 +32,6 @@ if found_symptoms:
     print("Знайдені симптоми:", found_symptoms)
 else:
     print("Симптоми не знайдені.")
+
+print(found_symptoms)
+
